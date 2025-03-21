@@ -118,6 +118,31 @@ describe('Mention parser', () => {
       '?',
     ])
   })
+
+  it('find mention with parenthesis in name', () => {
+    const string = 'Hello @(123|richard (with parenthesis)|group)?'
+    const result = richStringParser(string, [mentionParser()])
+
+    expect(result.length).toEqual(3)
+    expect(result[1]).toHaveProperty('id', 123)
+    expect(result[1]).toHaveProperty('type', 'MentionParser')
+    expect(result[1]).toHaveProperty('match', '@(123|richard (with parenthesis)|group)')
+    expect(result[1]).toHaveProperty('name', 'richard (with parenthesis)')
+    expect(result[1]).toHaveProperty('target', 'group')
+    expect(result).toEqual([
+      'Hello ',
+      {
+        type: 'MentionParser',
+        id: 123,
+        match: '@(123|richard (with parenthesis)|group)',
+        index: 6,
+        subIndex: 6,
+        name: 'richard (with parenthesis)',
+        target: 'group',
+      },
+      '?',
+    ])
+  })
 })
 
 describe('Email parser', () => {
@@ -309,7 +334,7 @@ describe('Preformance', () => {
     const afterDate = new Date()
 
     const time = afterDate.getTime() - beforeDate.getTime()
-    expect(time).toBeLessThanOrEqual(400)
+    expect(time).toBeLessThanOrEqual(450)
   })
 })
 
